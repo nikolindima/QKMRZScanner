@@ -26,6 +26,7 @@ public class QKMRZScannerView: UIView {
     fileprivate let cutoutView = QKCutoutView()
     fileprivate var isScanningPaused = false
     fileprivate var observer: NSKeyValueObservation?
+    public var waithingForResult = false
     @objc public dynamic var isScanning = false
     public var vibrateOnResult = true
     public weak var delegate: QKMRZScannerViewDelegate?
@@ -75,7 +76,7 @@ public class QKMRZScannerView: UIView {
             DispatchQueue.main.async { [weak self] in self?.adjustVideoPreviewLayerFrame() }
         }
     }
-    
+   
     public func stopScanning() {
         captureSession.stopRunning()
     }
@@ -249,6 +250,9 @@ public class QKMRZScannerView: UIView {
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if waithingForResult {
+            return
+        }
         guard let cgImage = CMSampleBufferGetImageBuffer(sampleBuffer)?.cgImage else {
             return
         }
@@ -277,8 +281,7 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             if let mrzTextImage = documentImage.cropping(to: mrzRegionRect) {
                 if let mrzResult = self.mrz(from: mrzTextImage), mrzResult.allCheckDigitsValid {
-                    self.stopScanning()
-                    
+                    self.waithingForResult = true
                     DispatchQueue.main.async {
                         let enlargedDocumentImage = self.enlargedDocumentImage(from: cgImage)
                         let scanResult = QKMRZScanResult(mrzResult: mrzResult, documentImage: enlargedDocumentImage)
