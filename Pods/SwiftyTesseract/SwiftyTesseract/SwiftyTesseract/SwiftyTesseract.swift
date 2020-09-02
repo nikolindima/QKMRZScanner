@@ -155,11 +155,14 @@ public class SwiftyTesseract {
     let _ = semaphore.wait(timeout: .distantFuture)
     
     // pixImage is a var because it has to be passed as an inout paramter to pixDestroy to release the memory allocation
-    var pixImage: Pix
+    var pixImage: Pix?
     
     defer {
       // Release the Pix instance from memory
-      pixDestroy(&pixImage)
+      if var pix = pixImage {
+        pixDestroy(&pix)
+      }
+      
       semaphore.signal()
     }
 
@@ -170,7 +173,8 @@ public class SwiftyTesseract {
       return
     }
 
-    TessBaseAPISetImage2(tesseract, pixImage)
+    // If we've reached this point, pixImage is guaranteed to be here
+    TessBaseAPISetImage2(tesseract, pixImage!)
 
     if TessBaseAPIGetSourceYResolution(tesseract) < 70 {
       TessBaseAPISetSourceResolution(tesseract, 300)
@@ -254,7 +258,7 @@ public class SwiftyTesseract {
     
     try pixImages.enumerated().forEach { [weak self] pageNumber, pix in
       guard let self = self else { return }
-      guard TessBaseAPIProcessPage(self.tesseract, pix, Int32(pageNumber), "page.\(pageNumber)", nil, 0, renderer) == 1 else {
+      guard TessBaseAPIProcessPage(self.tesseract, pix, Int32(pageNumber), "page.\(pageNumber)", nil, 30000, renderer) == 1 else {
         throw SwiftyTesseractError.unableToProcessPage
       }
     }
