@@ -19,14 +19,14 @@
 		12C0055522D5643F0086FDBC /* CIContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12C0055422D5643F0086FDBC /* CIContext.swift */; };
 		12E298AD22D52A6700A9AFBB /* LuminanceThresholdFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E298AC22D52A6700A9AFBB /* LuminanceThresholdFilter.swift */; };
 		5C45248B5974315AC8BE1E35 /* Pods_QKMRZScanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F58CF4674449175F89B65B8 /* Pods_QKMRZScanner.framework */; };
-		9D3A269424FF594100C75897 /* QKMRZParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A268C24FF594100C75897 /* QKMRZParser.swift */; };
-		9D3A269524FF594100C75897 /* MRZFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A268D24FF594100C75897 /* MRZFieldFormatter.swift */; };
-		9D3A269624FF594100C75897 /* String-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A268E24FF594100C75897 /* String-Ext.swift */; };
-		9D3A269724FF594100C75897 /* QKMRZResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A268F24FF594100C75897 /* QKMRZResult.swift */; };
-		9D3A269824FF594100C75897 /* TD1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269024FF594100C75897 /* TD1.swift */; };
-		9D3A269924FF594100C75897 /* MRZField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269124FF594100C75897 /* MRZField.swift */; };
-		9D3A269A24FF594100C75897 /* TD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269224FF594100C75897 /* TD2.swift */; };
-		9D3A269B24FF594100C75897 /* TD3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269324FF594100C75897 /* TD3.swift */; };
+		9D3A26A224FF59F800C75897 /* MRZField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269D24FF59F800C75897 /* MRZField.swift */; };
+		9D3A26A324FF59F800C75897 /* QKMRZParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269E24FF59F800C75897 /* QKMRZParser.swift */; };
+		9D3A26A424FF59F800C75897 /* MRZFieldFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A269F24FF59F800C75897 /* MRZFieldFormatter.swift */; };
+		9D3A26A524FF59F800C75897 /* QKMRZResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A024FF59F800C75897 /* QKMRZResult.swift */; };
+		9D3A26A624FF59F800C75897 /* String-Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A124FF59F800C75897 /* String-Ext.swift */; };
+		9D3A26AA24FF59FE00C75897 /* TD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A724FF59FE00C75897 /* TD2.swift */; };
+		9D3A26AB24FF59FE00C75897 /* TD3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A824FF59FE00C75897 /* TD3.swift */; };
+		9D3A26AC24FF59FE00C75897 /* TD1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A924FF59FE00C75897 /* TD1.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,14 +45,14 @@
 		12C0055422D5643F0086FDBC /* CIContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIContext.swift; sourceTree = "<group>"; };
 		12E298AC22D52A6700A9AFBB /* LuminanceThresholdFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LuminanceThresholdFilter.swift; sourceTree = "<group>"; };
 		6F58CF4674449175F89B65B8 /* Pods_QKMRZScanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QKMRZScanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9D3A268C24FF594100C75897 /* QKMRZParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QKMRZParser.swift; sourceTree = "<group>"; };
-		9D3A268D24FF594100C75897 /* MRZFieldFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZFieldFormatter.swift; sourceTree = "<group>"; };
-		9D3A268E24FF594100C75897 /* String-Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Ext.swift"; sourceTree = "<group>"; };
-		9D3A268F24FF594100C75897 /* QKMRZResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QKMRZResult.swift; sourceTree = "<group>"; };
-		9D3A269024FF594100C75897 /* TD1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD1.swift; sourceTree = "<group>"; };
-		9D3A269124FF594100C75897 /* MRZField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZField.swift; sourceTree = "<group>"; };
-		9D3A269224FF594100C75897 /* TD2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD2.swift; sourceTree = "<group>"; };
-		9D3A269324FF594100C75897 /* TD3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD3.swift; sourceTree = "<group>"; };
+		9D3A269D24FF59F800C75897 /* MRZField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZField.swift; sourceTree = "<group>"; };
+		9D3A269E24FF59F800C75897 /* QKMRZParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QKMRZParser.swift; sourceTree = "<group>"; };
+		9D3A269F24FF59F800C75897 /* MRZFieldFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZFieldFormatter.swift; sourceTree = "<group>"; };
+		9D3A26A024FF59F800C75897 /* QKMRZResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QKMRZResult.swift; sourceTree = "<group>"; };
+		9D3A26A124FF59F800C75897 /* String-Ext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String-Ext.swift"; sourceTree = "<group>"; };
+		9D3A26A724FF59FE00C75897 /* TD2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD2.swift; sourceTree = "<group>"; };
+		9D3A26A824FF59FE00C75897 /* TD3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD3.swift; sourceTree = "<group>"; };
+		9D3A26A924FF59FE00C75897 /* TD1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD1.swift; sourceTree = "<group>"; };
 		DA7784BC05891FFB8A38C353 /* Pods-QKMRZScanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QKMRZScanner.release.xcconfig"; path = "Pods/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner.release.xcconfig"; sourceTree = "<group>"; };
 		F6B140B9A4C7437306FFF880 /* Pods-QKMRZScanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QKMRZScanner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -144,14 +144,14 @@
 		9D3A269C24FF594500C75897 /* QKMRZParser */ = {
 			isa = PBXGroup;
 			children = (
-				9D3A269124FF594100C75897 /* MRZField.swift */,
-				9D3A268D24FF594100C75897 /* MRZFieldFormatter.swift */,
-				9D3A268C24FF594100C75897 /* QKMRZParser.swift */,
-				9D3A268F24FF594100C75897 /* QKMRZResult.swift */,
-				9D3A268E24FF594100C75897 /* String-Ext.swift */,
-				9D3A269024FF594100C75897 /* TD1.swift */,
-				9D3A269224FF594100C75897 /* TD2.swift */,
-				9D3A269324FF594100C75897 /* TD3.swift */,
+				9D3A269D24FF59F800C75897 /* MRZField.swift */,
+				9D3A269F24FF59F800C75897 /* MRZFieldFormatter.swift */,
+				9D3A269E24FF59F800C75897 /* QKMRZParser.swift */,
+				9D3A26A024FF59F800C75897 /* QKMRZResult.swift */,
+				9D3A26A124FF59F800C75897 /* String-Ext.swift */,
+				9D3A26A924FF59FE00C75897 /* TD1.swift */,
+				9D3A26A724FF59FE00C75897 /* TD2.swift */,
+				9D3A26A824FF59FE00C75897 /* TD3.swift */,
 			);
 			path = QKMRZParser;
 			sourceTree = "<group>";
@@ -268,22 +268,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D3A269724FF594100C75897 /* QKMRZResult.swift in Sources */,
+				9D3A26A524FF59F800C75897 /* QKMRZResult.swift in Sources */,
+				9D3A26A424FF59F800C75897 /* MRZFieldFormatter.swift in Sources */,
+				9D3A26AA24FF59FE00C75897 /* TD2.swift in Sources */,
+				9D3A26A324FF59F800C75897 /* QKMRZParser.swift in Sources */,
+				9D3A26A224FF59F800C75897 /* MRZField.swift in Sources */,
 				12C0055322D562CE0086FDBC /* CVImageBuffer.swift in Sources */,
-				9D3A269524FF594100C75897 /* MRZFieldFormatter.swift in Sources */,
 				12E298AD22D52A6700A9AFBB /* LuminanceThresholdFilter.swift in Sources */,
 				12C0055122D536AC0086FDBC /* CIImage.swift in Sources */,
+				9D3A26A624FF59F800C75897 /* String-Ext.swift in Sources */,
 				12C0055522D5643F0086FDBC /* CIContext.swift in Sources */,
-				9D3A269924FF594100C75897 /* MRZField.swift in Sources */,
 				12832C242167492A00D132D4 /* AVCaptureVideoOrientation.swift in Sources */,
 				12832C282167519000D132D4 /* QKCutoutView.swift in Sources */,
 				125C104F21767532009541D4 /* QKMRZScanResult.swift in Sources */,
-				9D3A269824FF594100C75897 /* TD1.swift in Sources */,
+				9D3A26AC24FF59FE00C75897 /* TD1.swift in Sources */,
+				9D3A26AB24FF59FE00C75897 /* TD3.swift in Sources */,
 				124306312165512C000BE94A /* QKMRZScannerView.swift in Sources */,
-				9D3A269424FF594100C75897 /* QKMRZParser.swift in Sources */,
-				9D3A269A24FF594100C75897 /* TD2.swift in Sources */,
-				9D3A269624FF594100C75897 /* String-Ext.swift in Sources */,
-				9D3A269B24FF594100C75897 /* TD3.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
