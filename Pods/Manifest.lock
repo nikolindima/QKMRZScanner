@@ -1,28 +1,16 @@
 PODS:
-  - QKMRZParser (1.0.1)
   - SwiftyTesseract (2.2.3)
 
 DEPENDENCIES:
-  - QKMRZParser (from `https://github.com/nikolindima/QKMRZParser.git`)
   - SwiftyTesseract (~> 2.2.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - SwiftyTesseract
 
-EXTERNAL SOURCES:
-  QKMRZParser:
-    :git: https://github.com/nikolindima/QKMRZParser.git
-
-CHECKOUT OPTIONS:
-  QKMRZParser:
-    :commit: d06a1342d53ce3868664e6c4959b5a15587e401c
-    :git: https://github.com/nikolindima/QKMRZParser.git
-
 SPEC CHECKSUMS:
-  QKMRZParser: c3df6ed5137585ab301978a3bb96269cad4c1f93
   SwiftyTesseract: d92b644e0e12d143bc272bfe1edb73ae07f2b2e8
 
-PODFILE CHECKSUM: d7832218b8a9e9f4f4057d6c71a94921de37bf4a
+PODFILE CHECKSUM: 481e19b601e57669baff2fa91d34d9402d5092db
 
 COCOAPODS: 1.9.3
