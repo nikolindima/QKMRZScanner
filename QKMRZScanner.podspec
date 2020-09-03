@@ -12,5 +12,6 @@ Pod::Spec.new do |s|
   s.source   = { :git => "https://github.com/Mattijah/QKMRZScanner.git", :tag => "v#{s.version}" }
   s.source_files = "QKMRZScanner/**/*.{swift}"
   s.frameworks   =  "Foundation", "UIKit", "AVFoundation", "CoreImage", "AudioToolbox"
-  s.static_framework = true	
+  s.static_framework = true
+  s.ios.vendored_frameworks = "MLKitCommon.framework", "MLKitTextRecognition.framework", "MLKitVision.framework"
 end
