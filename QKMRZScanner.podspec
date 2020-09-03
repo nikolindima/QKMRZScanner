@@ -13,5 +13,4 @@ Pod::Spec.new do |s|
   s.source_files = "QKMRZScanner/**/*.{swift}"
   s.frameworks   =  "Foundation", "UIKit", "AVFoundation", "CoreImage", "AudioToolbox"
   
-  s.dependency "GoogleMLKit/TextRecognition"
 end
