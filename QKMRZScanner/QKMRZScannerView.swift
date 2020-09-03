@@ -333,6 +333,7 @@ extension QKMRZScannerView: AVCapturePhotoCaptureDelegate {
             waithingForResult = false
             return
         }
+        self.stopScanning()
         if  let image = UIImage(data: data)?.cgImage {
             
             let orientation = photo.metadata[kCGImagePropertyOrientation as String] as! NSNumber
