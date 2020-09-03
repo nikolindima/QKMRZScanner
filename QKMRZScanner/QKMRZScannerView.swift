@@ -7,7 +7,8 @@
 
 import UIKit
 import AVFoundation
-import SwiftyTesseract
+import MLKitTextRecognition
+import MLKitVision
 import AudioToolbox
 import Vision
 
@@ -17,7 +18,7 @@ public protocol QKMRZScannerViewDelegate: class {
 
 @IBDesignable
 public class QKMRZScannerView: UIView {
-    fileprivate let tesseract = SwiftyTesseract(language: .custom("ocrb"), bundle: Bundle(for: QKMRZScannerView.self), engineMode: .tesseractLstmCombined)
+    fileprivate var textRecognizer: TextRecognizer!
     fileprivate let mrzParser = QKMRZParser(ocrCorrection: true)
     fileprivate let captureSession = AVCaptureSession()
     fileprivate let videoOutput = AVCaptureVideoDataOutput()
@@ -83,28 +84,39 @@ public class QKMRZScannerView: UIView {
     // MARK: MRZ
     fileprivate func mrz(from cgImage: CGImage) -> QKMRZResult? {
         let mrzTextImage = UIImage(cgImage: preprocessImage(cgImage))
-        var recognizedString: String?
+        let visionImage = VisionImage(image: mrzTextImage)
+        visionImage.orientation = .up
         
-        tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
-        
-        if let string = recognizedString, let mrzLines = mrzLines(from: string) {
-            return mrzParser.parse(mrzLines: mrzLines)
+        do {
+            let result = try textRecognizer.results(in: visionImage)
+            
+            if let mrzLines = self.mrzLines(from: result.text) {
+                return self.mrzParser.parse(mrzLines: mrzLines)
+            }
         }
+        catch {}
         
         return nil
     }
     
     fileprivate func mrzLines(from recognizedText: String) -> [String]? {
         let mrzString = recognizedText.replacingOccurrences(of: " ", with: "")
-        var mrzLines = mrzString.components(separatedBy: "\n").filter({ !$0.isEmpty })
-        
-        // Remove garbage strings located at the beginning and at the end of the result
-        if !mrzLines.isEmpty {
-            let averageLineLength = (mrzLines.reduce(0, { $0 + $1.count }) / mrzLines.count)
-            mrzLines = mrzLines.filter({ $0.count >= averageLineLength })
+        do {
+            let regex = try NSRegularExpression(pattern: #"^[A-Z0-9\<\n]*$"#)
+            if regex.matches(mrzString) {
+                var mrzLines = mrzString.components(separatedBy: "\n").filter({ !$0.isEmpty })
+                // Remove garbage strings located at the beginning and at the end of the result
+                if !mrzLines.isEmpty {
+                    let averageLineLength = (mrzLines.reduce(0, { $0 + $1.count }) / mrzLines.count)
+                    mrzLines = mrzLines.filter({ $0.count >= averageLineLength })
+                }
+                
+                return mrzLines.isEmpty ? nil : mrzLines
+            }
         }
+        catch {}
         
-        return mrzLines.isEmpty ? nil : mrzLines
+        return nil
     }
     
     // MARK: Document Image from Photo cropping
@@ -151,6 +163,7 @@ public class QKMRZScannerView: UIView {
     
     // MARK: Init methods
     fileprivate func initialize() {
+        textRecognizer = TextRecognizer.textRecognizer()
         FilterVendor.registerFilters()
         setViewStyle()
         addCutoutView()

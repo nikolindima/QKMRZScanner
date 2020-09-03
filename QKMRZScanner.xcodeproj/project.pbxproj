@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		121B535F216FBC72000F7123 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 121B535E216FBC72000F7123 /* CoreImage.framework */; };
-		123BDF00216FF0C6000CF6CF /* ocrb.traineddata in Resources */ = {isa = PBXBuildFile; fileRef = 123BDEFF216FF0C2000CF6CF /* ocrb.traineddata */; };
 		124306312165512C000BE94A /* QKMRZScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 124306302165512C000BE94A /* QKMRZScannerView.swift */; };
 		125C104F21767532009541D4 /* QKMRZScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 125C104E21767532009541D4 /* QKMRZScanResult.swift */; };
 		1277814321653FB500070E1C /* QKMRZScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 1277814121653FB500070E1C /* QKMRZScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,12 +26,12 @@
 		9D3A26AA24FF59FE00C75897 /* TD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A724FF59FE00C75897 /* TD2.swift */; };
 		9D3A26AB24FF59FE00C75897 /* TD3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A824FF59FE00C75897 /* TD3.swift */; };
 		9D3A26AC24FF59FE00C75897 /* TD1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A26A924FF59FE00C75897 /* TD1.swift */; };
+		9D545833250121EB0079E42A /* Regex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D545832250121EB0079E42A /* Regex.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		121B535E216FBC72000F7123 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		121B5361216FBCED000F7123 /* TesseractOCR.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TesseractOCR.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		123BDEFF216FF0C2000CF6CF /* ocrb.traineddata */ = {isa = PBXFileReference; lastKnownFileType = file; path = ocrb.traineddata; sourceTree = "<group>"; };
 		124306302165512C000BE94A /* QKMRZScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QKMRZScannerView.swift; sourceTree = "<group>"; };
 		125C104E21767532009541D4 /* QKMRZScanResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QKMRZScanResult.swift; sourceTree = "<group>"; };
 		1277813E21653FB500070E1C /* QKMRZScanner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = QKMRZScanner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,6 +52,7 @@
 		9D3A26A724FF59FE00C75897 /* TD2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD2.swift; sourceTree = "<group>"; };
 		9D3A26A824FF59FE00C75897 /* TD3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD3.swift; sourceTree = "<group>"; };
 		9D3A26A924FF59FE00C75897 /* TD1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TD1.swift; sourceTree = "<group>"; };
+		9D545832250121EB0079E42A /* Regex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Regex.swift; sourceTree = "<group>"; };
 		DA7784BC05891FFB8A38C353 /* Pods-QKMRZScanner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QKMRZScanner.release.xcconfig"; path = "Pods/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner.release.xcconfig"; sourceTree = "<group>"; };
 		F6B140B9A4C7437306FFF880 /* Pods-QKMRZScanner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QKMRZScanner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,14 +70,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		121B5359216FBBBF000F7123 /* tessdata */ = {
-			isa = PBXGroup;
-			children = (
-				123BDEFF216FF0C2000CF6CF /* ocrb.traineddata */,
-			);
-			path = tessdata;
-			sourceTree = "<group>";
-		};
 		122C5896216D64620001DE90 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -123,7 +115,6 @@
 		1277816A2165484E00070E1C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				121B5359216FBBBF000F7123 /* tessdata */,
 				1277814221653FB500070E1C /* Info.plist */,
 				1277814121653FB500070E1C /* QKMRZScanner.h */,
 			);
@@ -133,6 +124,7 @@
 		12832C222167491900D132D4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				9D545832250121EB0079E42A /* Regex.swift */,
 				12832C232167492A00D132D4 /* AVCaptureVideoOrientation.swift */,
 				12C0055022D536AC0086FDBC /* CIImage.swift */,
 				12C0055422D5643F0086FDBC /* CIContext.swift */,
@@ -188,6 +180,7 @@
 				1277813A21653FB500070E1C /* Frameworks */,
 				1277813B21653FB500070E1C /* Headers */,
 				1277813C21653FB500070E1C /* Resources */,
+				D2D3313F5D636B86360BDAAF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,7 +229,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				123BDF00216FF0C6000CF6CF /* ocrb.traineddata in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +253,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D2D3313F5D636B86360BDAAF /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/MLKitTextRecognition/GoogleMVTextDetectorResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-QKMRZScanner/Pods-QKMRZScanner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -274,6 +284,7 @@
 				9D3A26A324FF59F800C75897 /* QKMRZParser.swift in Sources */,
 				9D3A26A224FF59F800C75897 /* MRZField.swift in Sources */,
 				12C0055322D562CE0086FDBC /* CVImageBuffer.swift in Sources */,
+				9D545833250121EB0079E42A /* Regex.swift in Sources */,
 				12E298AD22D52A6700A9AFBB /* LuminanceThresholdFilter.swift in Sources */,
 				12C0055122D536AC0086FDBC /* CIImage.swift in Sources */,
 				9D3A26A624FF59F800C75897 /* String-Ext.swift in Sources */,
