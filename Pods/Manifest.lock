@@ -1,16 +1,16 @@
 PODS:
-  - SwiftyTesseract (2.2.3)
+  - SwiftyTesseract (3.1.2)
 
 DEPENDENCIES:
-  - SwiftyTesseract (~> 2.2.0)
+  - SwiftyTesseract
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - SwiftyTesseract
 
 SPEC CHECKSUMS:
-  SwiftyTesseract: d92b644e0e12d143bc272bfe1edb73ae07f2b2e8
+  SwiftyTesseract: d898472f63355f8bf023cbab2c80ceda0805a40c
 
-PODFILE CHECKSUM: 481e19b601e57669baff2fa91d34d9402d5092db
+PODFILE CHECKSUM: fbc701d232e88e4d3b2375e91af658c64b5e48d5
 
 COCOAPODS: 1.9.3
