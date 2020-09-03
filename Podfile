@@ -4,4 +4,5 @@ use_frameworks!
 
 target 'QKMRZScanner' do
     pod 'GoogleMLKit/TextRecognition'
+    pod 'SwiftyTesseract'
 end

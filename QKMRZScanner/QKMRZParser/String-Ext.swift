@@ -25,4 +25,11 @@ extension String {
         let toIndex = index(startIndex, offsetBy: to + 1)
         return String(self[fromIndex..<toIndex])
     }
+    
+    func replace(_ index: Int, _ newChar: Character) -> String {
+        var chars = Array(self) 
+        chars[index] = newChar
+        let modifiedString = String(chars)
+        return modifiedString
+    }
 }

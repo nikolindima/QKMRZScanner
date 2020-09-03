@@ -7,10 +7,18 @@
 
 import UIKit
 import AVFoundation
-import MLKitTextRecognition
-import MLKitVision
+import SwiftyTesseract
 import AudioToolbox
 import Vision
+import MLKitVision
+import MLKitTextRecognition
+
+enum CaptureError: Error {
+    case didFinishCaptureWithError
+    case bufferIsEmpty
+    case couldNotConvertToJPEG
+    case couldNotCreateUIImage
+}
 
 public protocol QKMRZScannerViewDelegate: class {
     func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didFind scanResult: QKMRZScanResult)
@@ -18,12 +26,12 @@ public protocol QKMRZScannerViewDelegate: class {
 
 @IBDesignable
 public class QKMRZScannerView: UIView {
-    fileprivate var textRecognizer: TextRecognizer!
+    fileprivate let tesseract = SwiftyTesseract(language: .custom("ocrb"), bundle: Bundle.main, engineMode: .tesseractLstmCombined)
     fileprivate let mrzParser = QKMRZParser(ocrCorrection: true)
     fileprivate let captureSession = AVCaptureSession()
     fileprivate let videoOutput = AVCaptureVideoDataOutput()
-    fileprivate let photoOutput = AVCapturePhotoOutput()
     fileprivate let videoPreviewLayer = AVCaptureVideoPreviewLayer()
+    fileprivate let photoOutput = AVCapturePhotoOutput()
     fileprivate let cutoutView = QKCutoutView()
     fileprivate var isScanningPaused = false
     fileprivate var observer: NSKeyValueObservation?
@@ -31,13 +39,16 @@ public class QKMRZScannerView: UIView {
     @objc public dynamic var isScanning = false
     public var vibrateOnResult = true
     public weak var delegate: QKMRZScannerViewDelegate?
+    var textRecognizer: TextRecognizer!
+    private var buffer: CMSampleBuffer?
+    private var finalMRZResult: QKMRZResult!
     
     public var cutoutRect: CGRect {
         return cutoutView.cutoutRect
     }
     
     fileprivate var interfaceOrientation: UIInterfaceOrientation {
-        return UIApplication.shared.statusBarOrientation
+        return .portrait
     }
     
     // MARK: Initializers
@@ -77,7 +88,7 @@ public class QKMRZScannerView: UIView {
             DispatchQueue.main.async { [weak self] in self?.adjustVideoPreviewLayerFrame() }
         }
     }
-   
+    
     public func stopScanning() {
         captureSession.stopRunning()
     }
@@ -85,17 +96,57 @@ public class QKMRZScannerView: UIView {
     // MARK: MRZ
     fileprivate func mrz(from cgImage: CGImage) -> QKMRZResult? {
         let mrzTextImage = UIImage(cgImage: preprocessImage(cgImage))
+        var recognizedString: String?
         let visionImage = VisionImage(image: mrzTextImage)
         visionImage.orientation = .up
         
         do {
             let result = try textRecognizer.results(in: visionImage)
             
-            if let mrzLines = self.mrzLines(from: result.text) {
-                return self.mrzParser.parse(mrzLines: mrzLines)
+            if var mrzLines = self.mrzLines(from: result.text) {
+                
+                tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
+                
+                if let string = recognizedString, let tesseractmrzLines = self.mrzLines(from: string) {
+                    var canContinue = false
+                    if tesseractmrzLines == mrzLines
+                    {
+                        canContinue = true
+                    }
+                    
+                    if tesseractmrzLines.count == mrzLines.count {
+                        for i in 0..<tesseractmrzLines.count  {
+                            if tesseractmrzLines[i].count == mrzLines[i].count {
+                                for j in 0..<tesseractmrzLines[i].count {
+                                    let substrT = tesseractmrzLines[i].substring(j, to: j)
+                                    let substrG = mrzLines[i].substring(j, to: j)
+                                    if substrT != substrG {
+                                        if (substrT == "0" || substrT == "O") && (substrG == "0" || substrG == "O") {
+                                        }
+                                        else if substrT == "<" && substrG == "K" {
+                                            let str = mrzLines[i].replace(j, "<")
+                                            mrzLines[i] = str
+                                        }
+                                        else {
+                                            break
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                    
+                    if canContinue {
+                        return self.mrzParser.parse(mrzLines: mrzLines)
+                    }
+                }
+                
             }
         }
-        catch {}
+        catch {
+            return nil
+        }
         
         return nil
     }
@@ -106,7 +157,6 @@ public class QKMRZScannerView: UIView {
             let regex = try NSRegularExpression(pattern: #"^[A-Z0-9\<\n]*$"#)
             if regex.matches(mrzString) {
                 var mrzLines = mrzString.components(separatedBy: "\n").filter({ !$0.isEmpty })
-                // Remove garbage strings located at the beginning and at the end of the result
                 if !mrzLines.isEmpty {
                     let averageLineLength = (mrzLines.reduce(0, { $0 + $1.count }) / mrzLines.count)
                     mrzLines = mrzLines.filter({ $0.count >= averageLineLength })
@@ -115,9 +165,12 @@ public class QKMRZScannerView: UIView {
                 return mrzLines.isEmpty ? nil : mrzLines
             }
         }
-        catch {}
+        catch {
+            return nil
+        }
         
         return nil
+        
     }
     
     // MARK: Document Image from Photo cropping
@@ -138,6 +191,17 @@ public class QKMRZScannerView: UIView {
     fileprivate func documentImage(from cgImage: CGImage) -> CGImage {
         let croppingRect = cutoutRect(for: cgImage)
         return cgImage.cropping(to: croppingRect) ?? cgImage
+    }
+    fileprivate func takePhoto() {
+        guard let photoOutputConnection = photoOutput.connection(with: AVMediaType.video) else {fatalError("Unable to establish input>output connection")}// setup a connection that manages input > output
+        photoOutputConnection.videoOrientation = .portrait // update photo's output connection to match device's orientation
+        
+        
+        
+        let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+        settings.isAutoStillImageStabilizationEnabled = photoOutput.isStillImageStabilizationSupported
+        settings.isHighResolutionPhotoEnabled = true
+        photoOutput.capturePhoto(with: settings, delegate: self)
     }
     
     fileprivate func enlargedDocumentImage(from cgImage: CGImage) -> UIImage {
@@ -165,6 +229,7 @@ public class QKMRZScannerView: UIView {
     // MARK: Init methods
     fileprivate func initialize() {
         textRecognizer = TextRecognizer.textRecognizer()
+        photoOutput.isHighResolutionCaptureEnabled = true
         FilterVendor.registerFilters()
         setViewStyle()
         addCutoutView()
@@ -190,7 +255,6 @@ public class QKMRZScannerView: UIView {
     
     fileprivate func initCaptureSession() {
         captureSession.sessionPreset = .hd1920x1080
-        photoOutput.isHighResolutionCaptureEnabled = true
         
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Camera not accessible")
@@ -212,6 +276,7 @@ public class QKMRZScannerView: UIView {
             captureSession.addInput(deviceInput)
             captureSession.addOutput(photoOutput)
             captureSession.addOutput(videoOutput)
+            captureSession.sessionPreset = .photo
             
             videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "video_frames_queue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem))
             videoOutput.alwaysDiscardsLateVideoFrames = true
@@ -255,13 +320,131 @@ public class QKMRZScannerView: UIView {
         }
         
         inputImage = inputImage.applyingFilter("CIExposureAdjust", parameters: ["inputEV": exposure])
-                               .applyingFilter("CILanczosScaleTransform", parameters: [kCIInputScaleKey: 2])
-                               .applyingFilter("LuminanceThresholdFilter", parameters: ["inputThreshold": threshold])
+            .applyingFilter("CILanczosScaleTransform", parameters: [kCIInputScaleKey: 2])
+            .applyingFilter("LuminanceThresholdFilter", parameters: ["inputThreshold": threshold])
         
         return CIContext.shared.createCGImage(inputImage, from: inputImage.extent)!
     }
 }
-
+extension QKMRZScannerView: AVCapturePhotoCaptureDelegate {
+    public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        
+        guard let data = photo.fileDataRepresentation() else {
+            waithingForResult = false
+            return
+        }
+        if  let image = UIImage(data: data)?.cgImage {
+            
+            let orientation = photo.metadata[kCGImagePropertyOrientation as String] as! NSNumber
+            let uiOrientation = UIImage.Orientation(rawValue: orientation.intValue)!
+            if let finalImage = self.createMatchingBackingDataWithImage(imageRef: image, orienation: uiOrientation) {
+                let documentImage = self.documentImage(from: finalImage)
+                let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
+                let scanResult = QKMRZScanResult(mrzResult: finalMRZResult, documentImage: uidocImage)
+                DispatchQueue.main.async {
+                    self.delegate?.mrzScannerView(self, didFind: scanResult)
+                    if self.vibrateOnResult {
+                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    func createMatchingBackingDataWithImage(imageRef: CGImage?, orienation: UIImage.Orientation) -> CGImage?
+    {
+        var orientedImage: CGImage?
+        
+        if let imageRef = imageRef {
+            let originalWidth = imageRef.width
+            let originalHeight = imageRef.height
+            let bitsPerComponent = imageRef.bitsPerComponent
+            let bytesPerRow = imageRef.bytesPerRow
+            
+            let bitmapInfo = imageRef.bitmapInfo
+            
+            guard let colorSpace = imageRef.colorSpace else {
+                return nil
+            }
+            
+            var degreesToRotate: Double
+            var swapWidthHeight: Bool
+            var mirrored: Bool
+            switch orienation {
+            case .up:
+                degreesToRotate = 0.0
+                swapWidthHeight = false
+                mirrored = false
+                break
+            case .upMirrored:
+                degreesToRotate = 0.0
+                swapWidthHeight = false
+                mirrored = true
+                break
+            case .right:
+                degreesToRotate = 90.0
+                swapWidthHeight = true
+                mirrored = false
+                break
+            case .rightMirrored:
+                degreesToRotate = 90.0
+                swapWidthHeight = true
+                mirrored = true
+                break
+            case .down:
+                degreesToRotate = 180.0
+                swapWidthHeight = false
+                mirrored = false
+                break
+            case .downMirrored:
+                degreesToRotate = 180.0
+                swapWidthHeight = false
+                mirrored = true
+                break
+            case .left:
+                degreesToRotate = -90.0
+                swapWidthHeight = true
+                mirrored = false
+                break
+            case .leftMirrored:
+                degreesToRotate = -90.0
+                swapWidthHeight = true
+                mirrored = false
+                break
+            @unknown default:
+                fatalError()
+            }
+            let radians = degreesToRotate * Double.pi / 180.0
+            
+            var width: Int
+            var height: Int
+            if swapWidthHeight {
+                width = originalHeight
+                height = originalWidth
+            } else {
+                width = originalWidth
+                height = originalHeight
+            }
+            
+            let contextRef = CGContext(data: nil, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
+            contextRef?.translateBy(x: CGFloat(width) / 2.0, y: CGFloat(height) / 2.0)
+            if mirrored {
+                contextRef?.scaleBy(x: -1.0, y: 1.0)
+            }
+            contextRef?.rotate(by: CGFloat(radians))
+            if swapWidthHeight {
+                contextRef?.translateBy(x: -CGFloat(height) / 2.0, y: -CGFloat(width) / 2.0)
+            } else {
+                contextRef?.translateBy(x: -CGFloat(width) / 2.0, y: -CGFloat(height) / 2.0)
+            }
+            contextRef?.draw(imageRef, in: CGRect(x: 0.0, y: 0.0, width: CGFloat(originalWidth), height: CGFloat(originalHeight)))
+            orientedImage = contextRef?.makeImage()
+        }
+        
+        return orientedImage
+    }
+}
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
@@ -297,18 +480,14 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             if let mrzTextImage = documentImage.cropping(to: mrzRegionRect) {
                 if let mrzResult = self.mrz(from: mrzTextImage), mrzResult.allCheckDigitsValid {
                     self.waithingForResult = true
-                    DispatchQueue.main.async {
-                        let enlargedDocumentImage = self.enlargedDocumentImage(from: cgImage)
-                        let scanResult = QKMRZScanResult(mrzResult: mrzResult, documentImage: enlargedDocumentImage)
-                        self.delegate?.mrzScannerView(self, didFind: scanResult)
-                        if self.vibrateOnResult {
-                            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                        }
-                    }
+                    self.finalMRZResult = mrzResult
+                    self.takePhoto()
+                    
                 }
             }
         }
         
         try? imageRequestHandler.perform([detectTextRectangles])
     }
+    
 }

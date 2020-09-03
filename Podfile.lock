@@ -52,9 +52,11 @@ PODS:
   - nanopb/encode (1.30906.0)
   - PromisesObjC (1.2.10)
   - Protobuf (3.13.0)
+  - SwiftyTesseract (3.1.2)
 
 DEPENDENCIES:
   - GoogleMLKit/TextRecognition
+  - SwiftyTesseract
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -70,6 +72,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Protobuf
+    - SwiftyTesseract
 
 SPEC CHECKSUMS:
   GoogleDataTransport: e85fb700c9b027079ce182c3d08e12e0f9618bb4
@@ -84,7 +87,8 @@ SPEC CHECKSUMS:
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
+  SwiftyTesseract: d898472f63355f8bf023cbab2c80ceda0805a40c
 
-PODFILE CHECKSUM: 631db5ee5ae51f1cc89f88375c9b2b47cf76f0ec
+PODFILE CHECKSUM: 14758f9afbd03dbb3376e639e34fbd0677b4dbad
 
 COCOAPODS: 1.9.3

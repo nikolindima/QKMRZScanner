@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
   s.source_files = "QKMRZScanner/**/*.{swift}"
   s.frameworks   =  "Foundation", "UIKit", "AVFoundation", "CoreImage", "AudioToolbox"
   
+  s.dependency "SwiftyTesseract"
   s.dependency "GoogleMLKit/TextRecognition"
   s.static_framework = true
 end
