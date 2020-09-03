@@ -14,4 +14,5 @@ Pod::Spec.new do |s|
   s.frameworks   =  "Foundation", "UIKit", "AVFoundation", "CoreImage", "AudioToolbox"
   
   s.dependency "GoogleMLKit/TextRecognition"
+  s.static_framework = true
 end
