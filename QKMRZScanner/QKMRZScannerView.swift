@@ -152,7 +152,7 @@ public class QKMRZScannerView: UIView {
     }
     
     fileprivate func mrzLines(from recognizedText: String) -> [String]? {
-        let mrzString = recognizedText.replacingOccurrences(of: " ", with: "")
+        let mrzString = recognizedText.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "«", with: "<")
         do {
             let regex = try NSRegularExpression(pattern: #"^[A-Z0-9\<\n]*$"#)
             if regex.matches(mrzString) {
