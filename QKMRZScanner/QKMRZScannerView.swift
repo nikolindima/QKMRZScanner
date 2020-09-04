@@ -474,9 +474,9 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             let mrzTextRectangles = results.map({ $0.boundingBox.applying(transform) }).filter({ $0.width > (imageWidth * 0.8) })
             let mrzRegionRect = mrzTextRectangles.reduce(into: CGRect.null, { $0 = $0.union($1) })
             
-            guard mrzRegionRect.height <= (imageHeight * 0.4) else { // Avoid processing the full image (can occur if there is a long text in the header)
-                return
-            }
+            guard mrzRegionRect.height <= (imageHeight * 0.4) else {return}
+            guard mrzRegionRect.origin.y >= (imageHeight * 0.8) else {return}
+            guard mrzRegionRect.origin.x >= (imageWidth * 0.03) else {return}
             
             if let mrzTextImage = documentImage.cropping(to: mrzRegionRect) {
                 if let mrzResult = self.mrz(from: mrzTextImage), mrzResult.allCheckDigitsValid {
