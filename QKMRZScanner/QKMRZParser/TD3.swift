@@ -46,7 +46,7 @@ class TD3 {
             expiryDate: expiryDate.value as! Date?,
             personalNumber: personalNumber.value as! String,
             personalNumber2: nil,
-            
+            mrzCode: [],
             isDocumentNumberValid: documentNumber.isValid!,
             isBirthdateValid: birthdate.isValid!,
             isExpiryDateValid: expiryDate.isValid!,

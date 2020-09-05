@@ -19,6 +19,7 @@ public struct QKMRZResult {
     public let expiryDate: Date? // `nil` if formatting failed
     public let personalNumber: String
     public let personalNumber2: String? // `nil` if not provided
+    public var mrzCode: [String]
     
     public let isDocumentNumberValid: Bool
     public let isBirthdateValid: Bool

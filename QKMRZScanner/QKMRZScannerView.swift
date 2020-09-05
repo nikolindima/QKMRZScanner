@@ -104,65 +104,64 @@ public class QKMRZScannerView: UIView {
         do {
             let result = try textRecognizer.results(in: visionImage)
             
-            if var mrzLines = self.mrzLines(from: result.text) {
-                
-                tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
-                
-                if let string = recognizedString, let tesseractmrzLines = self.mrzLines(from: string) {
-                    var canContinue = false
-                    if tesseractmrzLines == mrzLines
-                    {
-                        canContinue = true
-                    }
-                    
-                    if tesseractmrzLines.count == mrzLines.count {
-                        for i in 0..<tesseractmrzLines.count  {
-                            if tesseractmrzLines[i].count == mrzLines[i].count {
-                                for j in 0..<tesseractmrzLines[i].count {
-                                    let substrT = tesseractmrzLines[i].substring(j, to: j)
-                                    let substrG = mrzLines[i].substring(j, to: j)
-                                    if substrT != substrG {
-                                        if (substrT == "0" || substrT == "O") && (substrG == "0" || substrG == "O") {
-                                        }
-                                        else if substrT == "<" && substrG == "K" {
-                                            let str = mrzLines[i].replace(j, "<")
-                                            mrzLines[i] = str
-                                        }
-                                        else {
-                                            break
-                                        }
-                                    }
-                                }
-                                
+            var googleString = self.prepareString(string: result.text)
+            
+            tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
+            
+            guard var teseractString = recognizedString else {return nil}
+            
+            teseractString = self.prepareString(string: teseractString)
+            
+            if teseractString != googleString {
+                if teseractString.count == googleString.count {
+                    for j in 0..<teseractString.count {
+                        let substrT = teseractString.substring(j, to: j)
+                        let substrG = googleString.substring(j, to: j)
+                        if substrT != substrG {
+                            if substrT == "<" && substrG != "<" {
+                                let str = googleString.replace(j, "<")
+                                googleString = str
                             }
                         }
                     }
-                    
-                    if canContinue {
-                        return self.mrzParser.parse(mrzLines: mrzLines)
-                    }
                 }
+                else {return nil}
+            }
+            
+            guard let tesseractmrzLines = self.mrzLines(from: teseractString) else {return nil}
+            guard let googlemrzLines = self.mrzLines(from: googleString) else {return nil}
+            
+            guard let resaultTeseract = self.mrzParser.parse(mrzLines: tesseractmrzLines) else {return nil}
+            guard let resaultGoogle = self.mrzParser.parse(mrzLines: googlemrzLines) else {return nil}
+            
+            if resaultGoogle.mrzCode == resaultTeseract.mrzCode {
+                return resaultGoogle
                 
             }
         }
-        catch {
-            return nil
-        }
+        catch {return nil}
         
         return nil
     }
-    
+    fileprivate func prepareString(string: String) -> String {
+        var resultString = string.replacingOccurrences(of: " ", with: "")
+        .replacingOccurrences(of: "«", with: "<")
+        .replacingOccurrences(of: ":", with: "I")
+        
+        if resultString.last == "\n" {
+            resultString.removeLast()
+        }
+        return resultString
+    }
     fileprivate func mrzLines(from recognizedText: String) -> [String]? {
-        let mrzString = recognizedText.replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "«", with: "<")
         do {
             let regex = try NSRegularExpression(pattern: #"^[A-Z0-9\<\n]*$"#)
-            if regex.matches(mrzString) {
-                var mrzLines = mrzString.components(separatedBy: "\n").filter({ !$0.isEmpty })
+            if regex.matches(recognizedText) {
+                var mrzLines = recognizedText.components(separatedBy: "\n").filter({ !$0.isEmpty })
                 if !mrzLines.isEmpty {
                     let averageLineLength = (mrzLines.reduce(0, { $0 + $1.count }) / mrzLines.count)
                     mrzLines = mrzLines.filter({ $0.count >= averageLineLength })
                 }
-                
                 return mrzLines.isEmpty ? nil : mrzLines
             }
         }
@@ -477,6 +476,7 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             guard mrzRegionRect.height <= (imageHeight * 0.4) else {return}
             guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
+            guard mrzRegionRect.origin.y + mrzRegionRect.size.height < (imageHeight * 0.97) else {return}
             guard mrzRegionRect.origin.x >= (imageWidth * 0.03) else {return}
             
             if let mrzTextImage = documentImage.cropping(to: mrzRegionRect) {
