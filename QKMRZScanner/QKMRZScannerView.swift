@@ -22,6 +22,7 @@ enum CaptureError: Error {
 
 public protocol QKMRZScannerViewDelegate: class {
     func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didFind scanResult: QKMRZScanResult)
+    func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didScanWrontDocument scanResult: QKMRZScanResult)
 }
 
 @IBDesignable
@@ -343,9 +344,14 @@ extension QKMRZScannerView: AVCapturePhotoCaptureDelegate {
                 let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
                 let scanResult = QKMRZScanResult(mrzResult: finalMRZResult, documentImage: uidocImage)
                 DispatchQueue.main.async {
-                    self.delegate?.mrzScannerView(self, didFind: scanResult)
-                    if self.vibrateOnResult {
-                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                    if (scanResult.documentType == "P" && self.docType == 1) || (scanResult.documentType == "I" && self.docType == 2) {
+                        self.delegate?.mrzScannerView(self, didFind: scanResult)
+                        if self.vibrateOnResult {
+                            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                        }
+                    }
+                    else {
+                        self.delegate?.mrzScannerView(self, didScanWrontDocument: scanResult)
                     }
                 }
             }
