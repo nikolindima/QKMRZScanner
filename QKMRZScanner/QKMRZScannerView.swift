@@ -481,7 +481,8 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             let mrzRegionRect = mrzTextRectangles.reduce(into: CGRect.null, { $0 = $0.union($1) })
             
             guard mrzRegionRect.height <= (imageHeight * 0.4) else {return}
-            guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
+            guard mrzRegionRect.origin.y >= (imageHeight * 0.65) else {return}
+//            guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
             guard mrzRegionRect.origin.y + mrzRegionRect.size.height < (imageHeight * 0.97) else {return}
             guard mrzRegionRect.origin.x >= (imageWidth * 0.03) else {return}
             
