@@ -22,7 +22,6 @@ enum CaptureError: Error {
 
 public protocol QKMRZScannerViewDelegate: class {
     func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didFind scanResult: QKMRZScanResult)
-    func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didScanWrontDocument scanResult: QKMRZScanResult)
 }
 
 @IBDesignable
@@ -146,8 +145,8 @@ public class QKMRZScannerView: UIView {
     }
     fileprivate func prepareString(string: String) -> String {
         var resultString = string.replacingOccurrences(of: " ", with: "")
-        .replacingOccurrences(of: "«", with: "<")
-        .replacingOccurrences(of: ":", with: "I")
+            .replacingOccurrences(of: "«", with: "<")
+            .replacingOccurrences(of: ":", with: "I")
         
         if resultString.last == "\n" {
             resultString.removeLast()
@@ -341,18 +340,14 @@ extension QKMRZScannerView: AVCapturePhotoCaptureDelegate {
             let uiOrientation = UIImage.Orientation(rawValue: orientation.intValue)!
             if let finalImage = self.createMatchingBackingDataWithImage(imageRef: image, orienation: uiOrientation) {
                 let documentImage = self.enlargedDocumentImage(from: finalImage)
-//                let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
+                //                let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
                 let scanResult = QKMRZScanResult(mrzResult: finalMRZResult, documentImage: documentImage)
                 DispatchQueue.main.async {
-                    if (scanResult.documentType == "P" && self.docType == 1) || (scanResult.documentType == "I" && self.docType == 2) {
-                        self.delegate?.mrzScannerView(self, didFind: scanResult)
-                        if self.vibrateOnResult {
-                            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                        }
+                    self.delegate?.mrzScannerView(self, didFind: scanResult)
+                    if self.vibrateOnResult {
+                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     }
-                    else {
-                        self.delegate?.mrzScannerView(self, didScanWrontDocument: scanResult)
-                    }
+                    
                 }
             }
         }
@@ -482,7 +477,7 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             guard mrzRegionRect.height <= (imageHeight * 0.4) else {return}
             guard mrzRegionRect.origin.y >= (imageHeight * 0.65) else {return}
-//            guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
+            //            guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
             guard mrzRegionRect.origin.y + mrzRegionRect.size.height < (imageHeight * 0.97) else {return}
             guard mrzRegionRect.origin.x >= (imageWidth * 0.03) else {return}
             
