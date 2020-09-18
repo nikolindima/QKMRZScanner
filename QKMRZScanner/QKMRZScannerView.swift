@@ -207,7 +207,7 @@ public class QKMRZScannerView: UIView {
     
     fileprivate func enlargedDocumentImage(from cgImage: CGImage) -> UIImage {
         var croppingRect = cutoutRect(for: cgImage)
-        let margin = (0.05 * croppingRect.height) // 5% of the height
+        let margin = (0.08 * croppingRect.height) // 5% of the height
         croppingRect = CGRect(x: (croppingRect.minX - margin), y: (croppingRect.minY - margin), width: croppingRect.width + (margin * 2), height: croppingRect.height + (margin * 2))
         return UIImage(cgImage: cgImage.cropping(to: croppingRect)!)
     }
@@ -340,9 +340,9 @@ extension QKMRZScannerView: AVCapturePhotoCaptureDelegate {
             let orientation = photo.metadata[kCGImagePropertyOrientation as String] as! NSNumber
             let uiOrientation = UIImage.Orientation(rawValue: orientation.intValue)!
             if let finalImage = self.createMatchingBackingDataWithImage(imageRef: image, orienation: uiOrientation) {
-                let documentImage = self.documentImage(from: finalImage)
-                let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
-                let scanResult = QKMRZScanResult(mrzResult: finalMRZResult, documentImage: uidocImage)
+                let documentImage = self.enlargedDocumentImage(from: finalImage)
+//                let uidocImage = UIImage(cgImage: documentImage, scale: 1, orientation: .up)
+                let scanResult = QKMRZScanResult(mrzResult: finalMRZResult, documentImage: documentImage)
                 DispatchQueue.main.async {
                     if (scanResult.documentType == "P" && self.docType == 1) || (scanResult.documentType == "I" && self.docType == 2) {
                         self.delegate?.mrzScannerView(self, didFind: scanResult)
