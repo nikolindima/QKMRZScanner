@@ -136,7 +136,7 @@ public class QKMRZScannerView: UIView {
             if !resaultTeseract.allCheckDigitsValid || !resaultGoogle.allCheckDigitsValid {
                 return nil
             }
-            if resaultGoogle.mrzCode == resaultTeseract.mrzCode && validateResult(result: resaultGoogle) {
+            if resaultGoogle == resaultTeseract && validateResult(result: resaultGoogle) {
                 successResults.append(resaultGoogle)
                 
             }
@@ -148,7 +148,7 @@ public class QKMRZScannerView: UIView {
         
         if successResults.count > 2 {
             let allEqual = successResults.allSatisfy { (result) -> Bool in
-                result.mrzCode == successResults.first!.mrzCode
+                result == successResults.first!
             }
             if allEqual {
                 let result = successResults.first!
