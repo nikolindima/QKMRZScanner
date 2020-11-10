@@ -23,7 +23,7 @@ class MRZFieldFormatter {
     }
     
     // MARK: Main
-    func field(_ fieldType: MRZFieldType, from string: String, at startIndex: Int, length: Int, checkDigitFollows: Bool = false) -> MRZField {
+    func field(_ fieldType: MRZFieldType, from string: inout String, at startIndex: Int, length: Int, checkDigitFollows: Bool = false) -> MRZField {
         let endIndex = (startIndex + length)
         var rawValue = string.substring(startIndex, to: (endIndex - 1))
         var checkDigit = checkDigitFollows ? string.substring(endIndex, to: endIndex) : nil
@@ -31,6 +31,10 @@ class MRZFieldFormatter {
         if ocrCorrection {
             rawValue = correct(rawValue, fieldType: fieldType)
             checkDigit = (checkDigit == nil) ? nil : correct(checkDigit!, fieldType: fieldType)
+            let startIndex = string.index(string.startIndex, offsetBy: startIndex)
+            let endIndex = string.index(startIndex, offsetBy: length)
+            string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
+            
         }
         
         return MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
@@ -53,11 +57,11 @@ class MRZFieldFormatter {
     
     func correct(_ string: String, fieldType: MRZFieldType) -> String {
         switch fieldType {
-        case .birthdate, .expiryDate, .hash: // TODO: Check correction of dates (month & day)
+        case .birthdate, .expiryDate, .hash:
             return replaceLetters(in: string)
-        case .names, .documentType, .countryCode, .nationality: // TODO: Check documentType, countryCode and nationality against possible (allowed) values
+        case .names, .documentType, .countryCode, .nationality:
             return replaceDigits(in: string)
-        case .sex: // TODO: Improve correction (take into account "M" & "<" too)
+        case .sex:
             return string.replace("P", with: "F")
         default:
             return string
@@ -114,6 +118,7 @@ class MRZFieldFormatter {
             .replace("1", with: "I")
             .replace("2", with: "Z")
             .replace("8", with: "B")
+            .replace("5", with: "S")
     }
     
     private func replaceLetters(in string: String) -> String {
@@ -125,5 +130,6 @@ class MRZFieldFormatter {
             .replace("I", with: "1")
             .replace("Z", with: "2")
             .replace("B", with: "8")
+            .replace("S", with: "5")
     }
 }

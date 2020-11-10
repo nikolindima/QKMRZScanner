@@ -43,6 +43,7 @@ public class QKMRZScannerView: UIView {
     var textRecognizer: TextRecognizer!
     private var buffer: CMSampleBuffer?
     private var finalMRZResult: QKMRZResult!
+    fileprivate var successResults: [QKMRZResult] = []
     
     public var cutoutRect: CGRect {
         return cutoutView.cutoutRect
@@ -111,7 +112,6 @@ public class QKMRZScannerView: UIView {
             guard var teseractString = recognizedString else {return nil}
             
             teseractString = self.prepareString(string: teseractString)
-            
             if teseractString != googleString {
                 if teseractString.count == googleString.count {
                     for j in 0..<teseractString.count {
@@ -127,21 +127,64 @@ public class QKMRZScannerView: UIView {
                 }
                 else {return nil}
             }
-            
             guard let tesseractmrzLines = self.mrzLines(from: teseractString) else {return nil}
             guard let googlemrzLines = self.mrzLines(from: googleString) else {return nil}
             
             guard let resaultTeseract = self.mrzParser.parse(mrzLines: tesseractmrzLines) else {return nil}
             guard let resaultGoogle = self.mrzParser.parse(mrzLines: googlemrzLines) else {return nil}
             
-            if resaultGoogle.mrzCode == resaultTeseract.mrzCode {
-                return resaultGoogle
+            if !resaultTeseract.allCheckDigitsValid || !resaultGoogle.allCheckDigitsValid {
+                return nil
+            }
+            if resaultGoogle.mrzCode == resaultTeseract.mrzCode && validateResult(result: resaultGoogle) {
+                successResults.append(resaultGoogle)
                 
+            }
+            else {
+               return nil
             }
         }
         catch {return nil}
         
+        if successResults.count > 2 {
+            let allEqual = successResults.allSatisfy { (result) -> Bool in
+                result.mrzCode == successResults.first!.mrzCode
+            }
+            if allEqual {
+                let result = successResults.first!
+                successResults.removeAll()
+                return result
+            }
+            else {
+                successResults.removeAll()
+            }
+        }
+        
         return nil
+    }
+    fileprivate func validateResult(result: QKMRZResult) -> Bool {
+        do {
+            if result.nationalityCountryCode == "NLD" {
+                let regexCountry = try NSRegularExpression(pattern: #"^[A-NP-Z]{2}[A-NP-Z0-9]{6}[0-9]"#)
+                if !regexCountry.matches(result.documentNumber) {
+                    return false
+                }
+            }
+            
+            let regexLetter = try NSRegularExpression(pattern: #"^[A-Z\s]*$"#)
+            if !regexLetter.matches(result.givenNames) || !regexLetter.matches(result.surnames) || !regexLetter.matches(result.countryCode) ||
+                !regexLetter.matches(result.nationalityCountryCode) ||
+                !regexLetter.matches(result.documentType)
+            {
+                return false
+            }
+        }
+        catch {
+            return false
+        }
+       
+        return true
+        
     }
     fileprivate func prepareString(string: String) -> String {
         var resultString = string.replacingOccurrences(of: " ", with: "")
@@ -477,12 +520,11 @@ extension QKMRZScannerView: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             guard mrzRegionRect.height <= (imageHeight * 0.4) else {return}
             guard mrzRegionRect.origin.y >= (imageHeight * 0.65) else {return}
-            //            guard mrzRegionRect.origin.y >= (imageHeight * (self.docType == 1 ? 0.8 : 0.65)) else {return}
             guard mrzRegionRect.origin.y + mrzRegionRect.size.height < (imageHeight * 0.97) else {return}
             guard mrzRegionRect.origin.x >= (imageWidth * 0.03) else {return}
             
             if let mrzTextImage = documentImage.cropping(to: mrzRegionRect) {
-                if let mrzResult = self.mrz(from: mrzTextImage), mrzResult.allCheckDigitsValid {
+                if let mrzResult = self.mrz(from: mrzTextImage) {
                     self.waithingForResult = true
                     self.finalMRZResult = mrzResult
                     self.takePhoto()

@@ -20,6 +20,7 @@ class TD1 {
     let nationality: MRZField
     let optionalData2: MRZField
     let names: MRZField
+    let mrzCode: [String]
     
     fileprivate lazy var allCheckDigitsValid: Bool = {
         let compositedValue = [documentNumber, optionalData, birthdate, expiryDate, optionalData2].reduce("", { ($0 + $1.rawValue + ($1.checkDigit ?? "")) })
@@ -42,7 +43,7 @@ class TD1 {
             expiryDate: expiryDate.value as! Date?,
             personalNumber: optionalData.value as! String,
             personalNumber2: (optionalData2.value as! String),
-            mrzCode: [],
+            mrzCode: mrzCode,
             isDocumentNumberValid: documentNumber.isValid!,
             isBirthdateValid: birthdate.isValid!,
             isExpiryDateValid: expiryDate.isValid!,
@@ -52,20 +53,21 @@ class TD1 {
     }()
     
     init(from mrzLines: [String], using formatter: MRZFieldFormatter) {
-        let (firstLine, secondLine, thirdLine) = (mrzLines[0], mrzLines[1], mrzLines[2])
+        var (firstLine, secondLine, thirdLine) = (mrzLines[0], mrzLines[1], mrzLines[2])
         
-        documentType = formatter.field(.documentType, from: firstLine, at: 0, length: 2)
-        countryCode = formatter.field(.countryCode, from: firstLine, at: 2, length: 3)
-        documentNumber = formatter.field(.documentNumber, from: firstLine, at: 5, length: 9, checkDigitFollows: true)
-        optionalData = formatter.field(.optionalData, from: firstLine, at: 15, length: 15)
+        documentType = formatter.field(.documentType, from: &firstLine, at: 0, length: 2)
+        countryCode = formatter.field(.countryCode, from: &firstLine, at: 2, length: 3)
+        documentNumber = formatter.field(.documentNumber, from: &firstLine, at: 5, length: 9, checkDigitFollows: true)
+        optionalData = formatter.field(.optionalData, from: &firstLine, at: 15, length: 15)
         
-        birthdate = formatter.field(.birthdate, from: secondLine, at: 0, length: 6, checkDigitFollows: true)
-        sex = formatter.field(.sex, from: secondLine, at: 7, length: 1)
-        expiryDate = formatter.field(.expiryDate, from: secondLine, at: 8, length: 6, checkDigitFollows: true)
-        nationality = formatter.field(.nationality, from: secondLine, at: 15, length: 3)
-        optionalData2 = formatter.field(.optionalData, from: secondLine, at: 18, length: 11)
-        finalCheckDigit = formatter.field(.hash, from: secondLine, at: 29, length: 1).rawValue
+        birthdate = formatter.field(.birthdate, from: &secondLine, at: 0, length: 6, checkDigitFollows: true)
+        sex = formatter.field(.sex, from: &secondLine, at: 7, length: 1)
+        expiryDate = formatter.field(.expiryDate, from: &secondLine, at: 8, length: 6, checkDigitFollows: true)
+        nationality = formatter.field(.nationality, from: &secondLine, at: 15, length: 3)
+        optionalData2 = formatter.field(.optionalData, from: &secondLine, at: 18, length: 11)
+        finalCheckDigit = formatter.field(.hash, from: &secondLine, at: 29, length: 1).rawValue
         
-        names = formatter.field(.names, from: thirdLine, at: 0, length: 29)
+        names = formatter.field(.names, from: &thirdLine, at: 0, length: 29)
+        mrzCode = [firstLine,secondLine,thirdLine]
     }
 }
