@@ -57,7 +57,7 @@ class TD1 {
         
         documentType = formatter.field(.documentType, from: &firstLine, at: 0, length: 2)
         countryCode = formatter.field(.countryCode, from: &firstLine, at: 2, length: 3)
-        documentNumber = formatter.field(.documentNumber, from: &firstLine, at: 5, length: 9, checkDigitFollows: true)
+        documentNumber = formatter.field(.documentNumber, from: &firstLine, at: 5, length: 9, checkDigitFollows: true, isCountryHaveRules: countryCode.rawValue)
         optionalData = formatter.field(.optionalData, from: &firstLine, at: 15, length: 15)
         
         birthdate = formatter.field(.birthdate, from: &secondLine, at: 0, length: 6, checkDigitFollows: true)

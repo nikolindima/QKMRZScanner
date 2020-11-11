@@ -64,7 +64,7 @@ class TD3 {
         countryCode = formatter.field(.countryCode, from: &firstLine, at: 2, length: 3)
         names = formatter.field(.names, from: &firstLine, at: 5, length: 39)
         
-        documentNumber = formatter.field(.documentNumber, from: &secondLine, at: 0, length: 9, checkDigitFollows: true)
+        documentNumber = formatter.field(.documentNumber, from: &secondLine, at: 0, length: 9, checkDigitFollows: true, isCountryHaveRules: countryCode.rawValue)
         nationality = formatter.field(.nationality, from: &secondLine, at: 10, length: 3)
         birthdate = formatter.field(.birthdate, from: &secondLine, at: 13, length: 6, checkDigitFollows: true)
         sex = formatter.field(.sex, from: &secondLine, at: 20, length: 1)

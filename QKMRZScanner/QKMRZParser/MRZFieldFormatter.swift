@@ -23,18 +23,28 @@ class MRZFieldFormatter {
     }
     
     // MARK: Main
-    func field(_ fieldType: MRZFieldType, from string: inout String, at startIndex: Int, length: Int, checkDigitFollows: Bool = false) -> MRZField {
+    func field(_ fieldType: MRZFieldType, from string: inout String, at startIndex: Int, length: Int, checkDigitFollows: Bool = false, isCountryHaveRules: String? = nil) -> MRZField {
         let endIndex = (startIndex + length)
         var rawValue = string.substring(startIndex, to: (endIndex - 1))
-        var checkDigit = checkDigitFollows ? string.substring(endIndex, to: endIndex) : nil
+        let checkDigit = checkDigitFollows ? replaceLetters(in: string.substring(endIndex, to: endIndex)) : nil
         
         if ocrCorrection {
             rawValue = correct(rawValue, fieldType: fieldType)
-            checkDigit = (checkDigit == nil) ? nil : correct(checkDigit!, fieldType: fieldType)
+            let startIndex = string.index(string.startIndex, offsetBy: startIndex)
+            var endIndex = string.index(startIndex, offsetBy: length-1)
+            var caractersArray = Array(rawValue)
+            if checkDigit != nil {
+                caractersArray.append(contentsOf: Array(checkDigit!))
+                endIndex = string.index(startIndex, offsetBy: length)
+            }
+            string.replaceSubrange(startIndex...endIndex, with: caractersArray)
+            
+        }
+        if isCountryHaveRules != nil {
+            rawValue = correctForCountry(rawValue, countryCode: isCountryHaveRules!)
             let startIndex = string.index(string.startIndex, offsetBy: startIndex)
             let endIndex = string.index(startIndex, offsetBy: length)
             string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
-            
         }
         
         return MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
@@ -67,7 +77,12 @@ class MRZFieldFormatter {
             return string
         }
     }
-    
+    func correctForCountry(_ string: String, countryCode: String) -> String {
+        if countryCode == "NLD" {
+            return string.replace("O", with: "0")
+        }
+        return string
+    }
     // MARK: Value Formatters
     private func names(from string: String) -> (primary: String, secondary: String) {
         let identifiers = string.trimmingFillers().components(separatedBy: "<<").map({ $0.replace("<", with: " ") })
@@ -117,6 +132,7 @@ class MRZFieldFormatter {
             .replace("0", with: "O")
             .replace("1", with: "I")
             .replace("2", with: "Z")
+            .replace("3", with: "B")
             .replace("8", with: "B")
             .replace("5", with: "S")
     }

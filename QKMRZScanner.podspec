@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = "QKMRZScanner"
-  s.version  = "3.2.2"
+  s.version  = "3.2.3"
   s.platform = :ios, "11"
   s.swift_version = "4.2"
 

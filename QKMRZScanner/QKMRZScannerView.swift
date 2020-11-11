@@ -106,7 +106,7 @@ public class QKMRZScannerView: UIView {
             let result = try textRecognizer.results(in: visionImage)
             
             var googleString = self.prepareString(string: result.text)
-            
+            tesseract.whiteList = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<"
             tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
             
             guard var teseractString = recognizedString else {return nil}

@@ -8,61 +8,10 @@ Scans MRZ (Machine Readable Zone) from identity documents.
 
 ![scanning_preview](ReadmeAssets/scanning.gif)
 
-## Installation
+## MRZ transformation
 
-QKMRZScanner is available through CocoaPods. To install it, simply add the following line to your Podfile:
-
-```ruby
-pod 'QKMRZScanner'
-```
-
-## Setup
-
-Assign `QKMRZScannerView` to the component responsible for displaying the camera view.
-
-![storyboard_setup](ReadmeAssets/storyboard.png)
-
-
-Subsequently connect this component to your UIViewController.
-
-```swift
-@IBOutlet weak var mrzScannerView: QKMRZScannerView!
-```
-
-#### Start scanning
-```swift
-override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    mrzScannerView.startScanning()
-}
-```
-
-#### Stop scanning
-```swift
-override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    mrzScannerView.stopScanning()
-}
-```
-
-#### Scanning Result
-
-In order to retrieve the scanning results you need to implement `QKMRZScannerViewDelegate`.
-
-```swift
-class MRZScannerViewController: UIViewController, QKMRZScannerViewDelegate {
-    @IBOutlet weak var mrzScannerView: QKMRZScannerView!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        mrzScannerView.delegate = self
-    }
-
-    func mrzScannerView(_ mrzScannerView: QKMRZScannerView, didFind scanResult: QKMRZScanResult) {
-        print(scanResult)
-    }
-}
-```
+Version 3.2.0
+	- Add correction for NLD passports. Used regex ^[A-NP-Z]{2}[A-NP-Z0-9]{6}[0-9]
 
 ## License
 
