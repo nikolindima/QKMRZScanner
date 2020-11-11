@@ -49,6 +49,9 @@ class MRZFieldFormatter {
         var finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
         if (fieldType == .documentNumber || fieldType == .personalNumber) && !(finalField.isValid ?? false) {
             rawValue = rawValue.replace("O", with: "0")
+            let startIndex = string.index(string.startIndex, offsetBy: startIndex)
+            let endIndex = string.index(startIndex, offsetBy: length)
+            string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
             finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
         }
         return finalField
