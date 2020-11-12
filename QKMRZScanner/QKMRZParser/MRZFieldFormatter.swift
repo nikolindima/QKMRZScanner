@@ -76,7 +76,7 @@ class MRZFieldFormatter {
         switch fieldType {
         case .birthdate, .expiryDate, .hash:
             return replaceLetters(in: string)
-        case .names, .documentType, .countryCode, .nationality:
+        case .names, .documentType:
             return replaceDigits(in: string)
         case .sex:
             return string.replace("P", with: "F")
