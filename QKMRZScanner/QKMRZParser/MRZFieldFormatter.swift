@@ -40,12 +40,19 @@ class MRZFieldFormatter {
             string.replaceSubrange(startIndex...endIndex, with: caractersArray)
             
         }
-        if isCountryHaveRules != nil {
+        if isCountryHaveRules != nil && fieldType == .documentNumber {
             rawValue = correctForCountry(rawValue, countryCode: isCountryHaveRules!)
             let startIndex = string.index(string.startIndex, offsetBy: startIndex)
             let endIndex = string.index(startIndex, offsetBy: length)
             string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
         }
+        if isCountryHaveRules != nil && (fieldType == .personalNumber) {
+            rawValue = correctForCountryPersonalNumber(rawValue, countryCode: isCountryHaveRules!)
+            let startIndex = string.index(string.startIndex, offsetBy: startIndex)
+            let endIndex = string.index(startIndex, offsetBy: length)
+            string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
+        }
+        
         var finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
         if (fieldType == .documentNumber || fieldType == .personalNumber) && !(finalField.isValid ?? false) {
             rawValue = rawValue.replace("O", with: "0")
@@ -84,8 +91,14 @@ class MRZFieldFormatter {
             return string
         }
     }
-    func correctForCountry(_ string: String, countryCode: String) -> String {
+    func correctForCountryPersonalNumber(_ string: String, countryCode: String) -> String {
         if countryCode == "NLD" {
+            return replaceLetters(in: string)
+        }
+        return string
+    }
+    func correctForCountry(_ string: String, countryCode: String) -> String {
+        if countryCode == "NLD" || countryCode == "D" {
             return string.replace("O", with: "0")
         }
         return string

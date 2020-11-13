@@ -75,7 +75,7 @@ class TD3 {
             finalCheckDigit = nil
         }
         else {
-            personalNumber = formatter.field(.personalNumber, from: &secondLine, at: 28, length: 14, checkDigitFollows: true)
+            personalNumber = formatter.field(.personalNumber, from: &secondLine, at: 28, length: 14, checkDigitFollows: true, isCountryHaveRules: countryCode.rawValue)
             finalCheckDigit = formatter.field(.hash, from: &secondLine, at: 43, length: 1).rawValue
         }
         

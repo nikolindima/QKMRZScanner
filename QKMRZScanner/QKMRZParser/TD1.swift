@@ -67,7 +67,7 @@ class TD1 {
         optionalData2 = formatter.field(.optionalData, from: &secondLine, at: 18, length: 11)
         finalCheckDigit = formatter.field(.hash, from: &secondLine, at: 29, length: 1).rawValue
         
-        names = formatter.field(.names, from: &thirdLine, at: 0, length: 29)
+        names = formatter.field(.names, from: &thirdLine, at: 0, length: 30)
         mrzCode = [firstLine,secondLine,thirdLine]
     }
 }

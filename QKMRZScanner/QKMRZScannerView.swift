@@ -106,7 +106,7 @@ public class QKMRZScannerView: UIView {
             let result = try textRecognizer.results(in: visionImage)
             
             var googleString = self.prepareString(string: result.text)
-            tesseract.whiteList = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ<"
+
             tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
             
             guard var teseractString = recognizedString else {return nil}
@@ -167,6 +167,18 @@ public class QKMRZScannerView: UIView {
             if result.nationalityCountryCode == "NLD" {
                 let regexCountry = try NSRegularExpression(pattern: #"^[A-NP-Z]{2}[A-NP-Z0-9]{6}[0-9]"#)
                 if !regexCountry.matches(result.documentNumber) {
+                    return false
+                }
+            }
+            if result.nationalityCountryCode == "D" {
+                let regexCountry2 = try NSRegularExpression(pattern: #"^[CFGHJK]{1}[CFGHJKLMNPRTVWXYZ0-9]{8}$"#)
+                if !regexCountry2.matches(result.documentNumber) {
+                    return false
+                }
+            }
+            if result.nationalityCountryCode == "IRL" {
+                let regexCountry3 = try NSRegularExpression(pattern: #"^[A-Z0-9]{7,9}$"#)
+                if !regexCountry3.matches(result.documentNumber) {
                     return false
                 }
             }
