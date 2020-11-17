@@ -54,13 +54,22 @@ class MRZFieldFormatter {
         }
         
         var finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
-        if (fieldType == .documentNumber || fieldType == .personalNumber) && !(finalField.isValid ?? false) {
+        if (fieldType == .personalNumber) && !(finalField.isValid ?? false) {
             rawValue = rawValue.replace("O", with: "0")
             let startIndex = string.index(string.startIndex, offsetBy: startIndex)
             let endIndex = string.index(startIndex, offsetBy: length)
             string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
             finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
         }
+        
+        if (fieldType == .documentNumber && !(finalField.isValid ?? false)) {
+            rawValue = correctDocumtnNumberBruteForce(docNumber: rawValue, checkDigit: checkDigit!)
+            let startIndex = string.index(string.startIndex, offsetBy: startIndex)
+            let endIndex = string.index(startIndex, offsetBy: length)
+            string.replaceSubrange(startIndex..<endIndex, with: Array(rawValue))
+            finalField = MRZField(value: format(rawValue, as: fieldType), rawValue: rawValue, checkDigit: checkDigit)
+        }
+        
         return finalField
     }
     
@@ -87,6 +96,8 @@ class MRZFieldFormatter {
             return replaceDigits(in: string)
         case .sex:
             return string.replace("P", with: "F")
+        case .countryCode, .nationality:
+            return string.replace("0", with: "D")
         default:
             return string
         }
@@ -98,7 +109,8 @@ class MRZFieldFormatter {
         return string
     }
     func correctForCountry(_ string: String, countryCode: String) -> String {
-        if countryCode == "NLD" || countryCode == "D" {
+        let cCode = countryCode.replace("<", with: "")
+        if cCode == "NLD" || cCode == "D" {
             return string.replace("O", with: "0")
         }
         return string
@@ -114,6 +126,7 @@ class MRZFieldFormatter {
         switch string {
         case "M": return "M"
         case "F": return "F"
+        case "X": return "X"
         case "<": return "UNSPECIFIED" // X
         default: return nil
         }
@@ -168,4 +181,55 @@ class MRZFieldFormatter {
             .replace("B", with: "8")
             .replace("S", with: "5")
     }
+    
+    private func correctDocumtnNumberBruteForce(docNumber: String, checkDigit: String) -> String {
+        
+        let charsArray = Array(docNumber)
+        let ziroOcount = charsArray.reduce(0, { (result, char) in
+            if char == "0" || char == "O" {
+                return result + 1
+            }
+            return result
+        })
+        
+        let allVariants = permutationsWithRepetitionFrom(["0", "O"], taking: ziroOcount)
+        
+        var stringToValidate = ""
+        var indexChar = 0
+        
+        for variant in allVariants {
+            stringToValidate = ""
+            indexChar = 0
+            for char in charsArray {
+                if char == "0" || char == "O" {
+                    stringToValidate.append(variant[indexChar])
+                    indexChar += 1
+                }
+                else {
+                    stringToValidate.append(char)
+                }
+            }
+        
+            if MRZField.isValueValid(stringToValidate, checkDigit: checkDigit) {
+                return stringToValidate
+            }
+        }
+        
+        return docNumber
+    }
+    private func permutationsWithRepetitionFrom<T>(_ elements: [T], taking: Int) -> [[T]] {
+        guard elements.count >= 0 && taking > 0 else { return [[]] }
+        
+        if taking == 1 {
+            return elements.map {[$0]}
+        }
+        
+        var permutations = [[T]]()
+        for element in elements {
+            permutations += permutationsWithRepetitionFrom(elements, taking: taking - 1).map {[element] + $0}
+        }
+        
+        return permutations
+    }
+    
 }

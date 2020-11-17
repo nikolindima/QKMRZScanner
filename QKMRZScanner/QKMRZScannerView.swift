@@ -199,7 +199,7 @@ public class QKMRZScannerView: UIView {
         
     }
     fileprivate func prepareString(string: String) -> String {
-        var resultString = string.replacingOccurrences(of: " ", with: "")
+        var resultString = string.uppercased().replacingOccurrences(of: " ", with: "")
             .replacingOccurrences(of: "«", with: "<")
             .replacingOccurrences(of: ":", with: "I")
         
