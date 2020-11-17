@@ -12,6 +12,9 @@ Scans MRZ (Machine Readable Zone) from identity documents.
 
 Version 3.2.0
 	- Add correction for NLD passports. Used regex ^[A-NP-Z]{2}[A-NP-Z0-9]{6}[0-9]
+Version 3.3.0
+	- Add correction for D passports. Used regex ^[CFGHJK]{1}[CFGHJKLMNPRTVWXYZ0-9]{8}$
+	- Add correction for IRL passports. Used regex ^[A-Z0-9]{7,9}$
 
 ## License
 
