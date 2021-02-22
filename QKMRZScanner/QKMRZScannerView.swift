@@ -309,7 +309,7 @@ public class QKMRZScannerView: UIView {
     }
     
     fileprivate func initCaptureSession() {
-        captureSession.sessionPreset = .hd1920x1080
+        captureSession.sessionPreset = .hd4K3840x2160
         
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Camera not accessible")
@@ -331,7 +331,7 @@ public class QKMRZScannerView: UIView {
             captureSession.addInput(deviceInput)
             captureSession.addOutput(photoOutput)
             captureSession.addOutput(videoOutput)
-            captureSession.sessionPreset = .photo
+            captureSession.sessionPreset = .hd4K3840x2160
             
             videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "video_frames_queue", qos: .userInteractive, attributes: [], autoreleaseFrequency: .workItem))
             videoOutput.alwaysDiscardsLateVideoFrames = true
