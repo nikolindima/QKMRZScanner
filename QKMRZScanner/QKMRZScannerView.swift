@@ -7,7 +7,7 @@
 
 import UIKit
 import AVFoundation
-import SwiftyTesseract
+//import SwiftyTesseract
 import AudioToolbox
 import Vision
 import MLKitVision
@@ -26,7 +26,7 @@ public protocol QKMRZScannerViewDelegate: class {
 
 @IBDesignable
 public class QKMRZScannerView: UIView {
-    fileprivate let tesseract = SwiftyTesseract(language: .custom("ocrb"), bundle: Bundle(for: QKMRZScannerView.self), engineMode: .tesseractOnly)
+//    fileprivate let tesseract = SwiftyTesseract(language: .custom("ocrb"), bundle: Bundle(for: QKMRZScannerView.self), engineMode: .tesseractOnly)
     fileprivate let mrzParser = QKMRZParser(ocrCorrection: true)
     fileprivate let captureSession = AVCaptureSession()
     fileprivate let videoOutput = AVCaptureVideoDataOutput()
@@ -106,8 +106,8 @@ public class QKMRZScannerView: UIView {
             let result = try textRecognizer.results(in: visionImage)
             
             var googleString = self.prepareString(string: result.text)
-
-            tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
+            recognizedString = googleString
+//            tesseract.performOCR(on: mrzTextImage) { recognizedString = $0 }
             
             guard var teseractString = recognizedString else {return nil}
             
